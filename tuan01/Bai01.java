@@ -1,4 +1,4 @@
-package lab01;
+package tuan01;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class bai01 extends JFrame implements ActionListener {
+public class Bai01 extends JFrame implements ActionListener {
 	private JButton buttonGiai = new JButton("Giải");
 	private JButton buttonXoa = new JButton("Xóa rỗng");
 	private JButton buttonThoat = new JButton("Thoát");
@@ -22,7 +22,7 @@ public class bai01 extends JFrame implements ActionListener {
 	private JTextField txtC = new JTextField();
 	private JTextField txtKQ = new JTextField();
 
-	public bai01() {
+	public Bai01() {
 		this.setTitle("^-^");
 		this.setSize(400, 400);
 		this.setLocationRelativeTo(null);
@@ -128,7 +128,17 @@ public class bai01 extends JFrame implements ActionListener {
 				int c = Integer.parseInt(txtC.getText());
 
 				float delta = (b * b) - (4 * a * c);
-				txtKQ.setText("Delta = " + delta);
+
+				if (delta < 0) {
+					txtKQ.setText("Phương trình vô nghiệm");
+				} else if (delta == 0) {
+					txtKQ.setText("Nghiệm kép x1 = x2 = " + (-b * 1.0 / (2 * a)));
+				} else {
+					double x1 = (-b + Math.sqrt(a)) / (2 * a);
+					double x2 = (-b - Math.sqrt(a)) / (2 * a);
+
+					txtKQ.setText("2 nghiệm phân biệt: x1 = " + x1 + ", x2 = " + x2);
+				}
 			}
 		}
 	}
@@ -147,6 +157,6 @@ public class bai01 extends JFrame implements ActionListener {
 	}
 
 	public static void main(String[] args) {
-		new bai01().setVisible(true);
+		new Bai01().setVisible(true);
 	}
 }
