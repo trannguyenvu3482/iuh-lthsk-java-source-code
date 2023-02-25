@@ -5,8 +5,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
-import java.util.Iterator;
 import java.util.Locale;
 
 import javax.swing.BorderFactory;
@@ -25,10 +26,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 public class GUI extends JFrame implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	JPanel centerPanel = new JPanel();
 	JTextField txtMaSo = new JTextField(10);
 	JButton btnTim = new JButton("Tìm");
@@ -145,10 +148,33 @@ public class GUI extends JFrame implements ActionListener {
 		String[] cols = { "Mã NV", "Họ", "Tên", "Phái", "Tuổi", "Tiền lương" };
 		model = new DefaultTableModel(cols, 0);
 		tbl = new JTable(model);
+		tbl.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		
 		JScrollPane tablePane = new JScrollPane(tbl);
 		centerPanel.add(tablePane);
 		
+		tbl.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// Set dữ liệu
+				int row = tbl.getSelectedRow();
+				txtMaNV.setText(tbl.getModel().getValueAt(row, 0).toString());
+				txtHo.setText(tbl.getModel().getValueAt(row, 1).toString());
+				txtTen.setText(tbl.getModel().getValueAt(row, 2).toString());
+				txtTuoi.setText(tbl.getModel().getValueAt(row, 4).toString());
+				if (tbl.getModel().getValueAt(row, 3).toString().equalsIgnoreCase("Nam")) {
+					radNam.setSelected(true);
+					radNu.setSelected(false);
+				} else {
+					radNam.setSelected(false);
+					radNu.setSelected(true);
+				}
+				txtTienLuong.setText(Integer.toString(list.ls.get(row).getTienLuong()));
+			}
+		});
 	}
+	
+	
 
 	public boolean checkNhapLieu() {
 		if (txtMaNV.getText().equals("") || txtHo.getText().equals("") || txtTen.getText().equals("")
@@ -193,9 +219,13 @@ public class GUI extends JFrame implements ActionListener {
 
 		if (o.equals(btnThem)) {
 			if (checkNhapLieu()) {
-				list.themNhanVien(new NhanVien(txtMaNV.getText(), txtHo.getText(), txtTen.getText(),
-						(radNam.isSelected() ? "Nam" : "Nữ"), Integer.parseInt(txtTuoi.getText()), Integer.parseInt(txtTienLuong.getText())));
-				JOptionPane.showMessageDialog(this, "Đã thêm thành công!");
+				if (list.timNhanVien(txtMaNV.getText()) == -1) {
+					list.themNhanVien(new NhanVien(txtMaNV.getText(), txtHo.getText(), txtTen.getText(),
+							(radNam.isSelected() ? "Nam" : "Nữ"), Integer.parseInt(txtTuoi.getText()), Integer.parseInt(txtTienLuong.getText())));
+					JOptionPane.showMessageDialog(this, "Đã thêm thành công!");
+				} else {
+					JOptionPane.showMessageDialog(this, "Đã có mã nhân viên này trong hệ thống!");
+				}
 				refreshTable();
 			} else {
 				JOptionPane.showMessageDialog(this, "Dữ liệu chưa đúng định dạng!");
@@ -218,9 +248,37 @@ public class GUI extends JFrame implements ActionListener {
 				}
 			}
 		} else if (o.equals(btnLuu)) {
-
+			if (tbl.getSelectedRowCount() == 0) {
+				JOptionPane.showMessageDialog(this, "Phải chọn một dòng nào đó để chỉnh sửa!");
+				return;
+			}
+			
+			if (list.timNhanVien(txtMaNV.getText()) == -1) {
+				int row = tbl.getSelectedRow();
+				list.ls.get(row).setMaNV(txtMaNV.getText());
+				list.ls.get(row).setHoNV(txtHo.getText());
+				list.ls.get(row).setTenSV(txtTen.getText());
+				if (radNam.isSelected()) {
+					list.ls.get(row).setPhai("Nam");
+				} else {
+					list.ls.get(row).setPhai("Nu");
+				}
+				list.ls.get(row).setTuoi(Integer.parseInt(txtTuoi.getText()));
+				list.ls.get(row).setTienLuong(Integer.parseInt(txtTienLuong.getText()));
+				JOptionPane.showMessageDialog(this, "Đã cập nhật thành công!");
+				refreshTable();
+			} else {
+				JOptionPane.showMessageDialog(this, "Đã có mã nhân viên này trong hệ thống!");
+			}
 		} else if (o.equals(btnTim)) {
 			if (!txtMaSo.getText().equals("")) {
+				int index = list.timNhanVien(txtMaSo.getText());
+				
+				if (index != -1) {
+					tbl.setRowSelectionInterval(index, index);
+				} else {
+					JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên có mã " + txtMaSo.getText());
+				}
 				
 			} else {
 				JOptionPane.showMessageDialog(this, "Vui lòng nhập vào mã số cần tìm!");

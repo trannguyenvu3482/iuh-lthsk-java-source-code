@@ -25,4 +25,14 @@ public class DanhSachNhanVien {
 	public int countNV() {
 		return ls.size();
 	}
+	
+	public int timNhanVien(String maNV) {
+		for (int i = 0; i < ls.size(); i++) {
+			if (ls.get(i).getMaNV().equals(maNV)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
 }
