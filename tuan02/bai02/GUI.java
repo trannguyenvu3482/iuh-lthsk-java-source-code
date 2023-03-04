@@ -1,4 +1,4 @@
-package tuan02_bai02;
+package bai02;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
