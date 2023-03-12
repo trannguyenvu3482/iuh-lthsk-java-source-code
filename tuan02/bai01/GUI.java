@@ -1,4 +1,4 @@
-package bai01;
+package tuan02_bai01;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -7,8 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 import java.util.Locale;
+import java.util.Scanner;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -34,6 +39,8 @@ public class GUI extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	JPanel centerPanel = new JPanel();
 	JTextField txtMaSo = new JTextField(10);
+	JButton btnSaveFile = new JButton("Save file");
+	JButton btnReadFile = new JButton("Read file");
 	JButton btnTim = new JButton("Tìm");
 	JButton btnThem = new JButton("Thêm");
 	JButton btnXoaTrang = new JButton("Xóa trắng");
@@ -47,6 +54,7 @@ public class GUI extends JFrame implements ActionListener {
 	JRadioButton radNam = new JRadioButton("Nam");
 	JRadioButton radNu = new JRadioButton("Nữ");
 	JTable tbl;
+
 	DefaultTableModel model;
 	DanhSachNhanVien list = new DanhSachNhanVien();
 
@@ -124,6 +132,8 @@ public class GUI extends JFrame implements ActionListener {
 		// South - right
 		JPanel right = new JPanel();
 		right.setBorder(BorderFactory.createLineBorder(Color.gray));
+		right.add(btnSaveFile);
+		right.add(btnReadFile);
 		right.add(btnThem);
 		right.add(btnXoaTrang);
 		right.add(btnXoa);
@@ -142,6 +152,8 @@ public class GUI extends JFrame implements ActionListener {
 		btnXoa.addActionListener(this);
 		btnLuu.addActionListener(this);
 		btnTim.addActionListener(this);
+		btnSaveFile.addActionListener(this);
+		btnReadFile.addActionListener(this);
 	}
 
 	public void createTable() {
@@ -149,10 +161,10 @@ public class GUI extends JFrame implements ActionListener {
 		model = new DefaultTableModel(cols, 0);
 		tbl = new JTable(model);
 		tbl.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
+
 		JScrollPane tablePane = new JScrollPane(tbl);
 		centerPanel.add(tablePane);
-		
+
 		tbl.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -173,8 +185,54 @@ public class GUI extends JFrame implements ActionListener {
 			}
 		});
 	}
-	
-	
+
+	// Read txt file
+	public DanhSachNhanVien readTxtFile(String part) throws IOException {
+		File f = new File(part);
+
+		if (f.exists()) {
+			Scanner sc = new Scanner(f);
+			while (sc.hasNextLine()) {
+				String line = sc.nextLine();
+				String[] data = line.split(",");
+				NhanVien nv = new NhanVien(data[0], data[1], data[2], data[3], Integer.parseInt(data[4]),
+						Integer.parseInt(data[5]));
+				list.themNhanVien(nv);
+			}
+			sc.close();
+		} else {
+			f.createNewFile();
+		}
+		return list;
+	}
+
+	// Write txt file
+
+	// Read binary file
+	public DanhSachNhanVien readBinFile() {
+		return list;
+
+	}
+
+	// Write binary file
+
+	// Write Binary file
+	public void writeBinFile() throws IOException {
+		FileOutputStream fos = null;
+		ObjectOutputStream oos = null;
+
+		try {
+			fos = new FileOutputStream("test.dat");
+			oos = new ObjectOutputStream(fos);
+
+			oos.writeObject(list);
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			fos.close();
+			oos.close();
+		}
+	}
 
 	public boolean checkNhapLieu() {
 		if (txtMaNV.getText().equals("") || txtHo.getText().equals("") || txtTen.getText().equals("")
@@ -188,7 +246,7 @@ public class GUI extends JFrame implements ActionListener {
 
 		return true;
 	}
-	
+
 	public void refreshTable() {
 		model.setRowCount(0);
 		txtMaNV.setText("");
@@ -197,20 +255,21 @@ public class GUI extends JFrame implements ActionListener {
 		txtTuoi.setText("");
 		txtTienLuong.setText("");
 		txtMaNV.grabFocus();
-		String[] options = {"Nam", "Nữ"};
+		String[] options = { "Nam", "Nữ" };
 		JComboBox<String> combobox = new JComboBox<String>(options);
 
 		NumberFormat nf = NumberFormat.getCurrencyInstance(new Locale("en", "US"));
-		
+
 		TableColumn phaiColumn = tbl.getColumnModel().getColumn(3);
 		phaiColumn.setCellEditor(new DefaultCellEditor(combobox));
-		
+
 		for (NhanVien nv : list.ls) {
-			Object[] data = {nv.getMaNV(), nv.getHoNV(), nv.getTenSV(), nv.getPhai(), nv.getTuoi(), nf.format(nv.getTienLuong())};
+			Object[] data = { nv.getMaNV(), nv.getHoNV(), nv.getTenSV(), nv.getPhai(), nv.getTuoi(),
+					nf.format(nv.getTienLuong()) };
 			combobox.setSelectedItem(nv.getPhai());
 			model.addRow(data);
 		}
-		
+
 	}
 
 	@Override
@@ -221,7 +280,8 @@ public class GUI extends JFrame implements ActionListener {
 			if (checkNhapLieu()) {
 				if (list.timNhanVien(txtMaNV.getText()) == -1) {
 					list.themNhanVien(new NhanVien(txtMaNV.getText(), txtHo.getText(), txtTen.getText(),
-							(radNam.isSelected() ? "Nam" : "Nữ"), Integer.parseInt(txtTuoi.getText()), Integer.parseInt(txtTienLuong.getText())));
+							(radNam.isSelected() ? "Nam" : "Nữ"), Integer.parseInt(txtTuoi.getText()),
+							Integer.parseInt(txtTienLuong.getText())));
 					JOptionPane.showMessageDialog(this, "Đã thêm thành công!");
 				} else {
 					JOptionPane.showMessageDialog(this, "Đã có mã nhân viên này trong hệ thống!");
@@ -242,7 +302,8 @@ public class GUI extends JFrame implements ActionListener {
 			if (tbl.getSelectedRow() == -1) {
 				JOptionPane.showMessageDialog(this, "Phải chọn dòng cần xóa");
 			} else {
-				if (JOptionPane.showConfirmDialog(this, "Bạn có muốn xóa dòng này không", "Canh bao", JOptionPane.YES_NO_OPTION)==JOptionPane.YES_OPTION) {
+				if (JOptionPane.showConfirmDialog(this, "Bạn có muốn xóa dòng này không", "Canh bao",
+						JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 					list.xoaNhanVien(tbl.getSelectedRow());
 					refreshTable();
 				}
@@ -252,7 +313,7 @@ public class GUI extends JFrame implements ActionListener {
 				JOptionPane.showMessageDialog(this, "Phải chọn một dòng nào đó để chỉnh sửa!");
 				return;
 			}
-			
+
 			if (list.timNhanVien(txtMaNV.getText()) == -1) {
 				int row = tbl.getSelectedRow();
 				list.ls.get(row).setMaNV(txtMaNV.getText());
@@ -273,16 +334,20 @@ public class GUI extends JFrame implements ActionListener {
 		} else if (o.equals(btnTim)) {
 			if (!txtMaSo.getText().equals("")) {
 				int index = list.timNhanVien(txtMaSo.getText());
-				
+
 				if (index != -1) {
 					tbl.setRowSelectionInterval(index, index);
 				} else {
 					JOptionPane.showMessageDialog(this, "Không tìm thấy nhân viên có mã " + txtMaSo.getText());
 				}
-				
+
 			} else {
 				JOptionPane.showMessageDialog(this, "Vui lòng nhập vào mã số cần tìm!");
 			}
+		} else if (o.equals(btnSaveFile)) {
+			JOptionPane.showMessageDialog(this, "Đã lưu file!");
+		} else if (o.equals(btnReadFile)) {
+			JOptionPane.showMessageDialog(this, "Đã đọc file!");
 		}
 	}
 
