@@ -207,14 +207,15 @@ public class GUI extends JFrame implements ActionListener {
 	}
 
 	// Write txt file
+	public void writeTxtFile(DanhSachNhanVien ds) {
+
+	}
 
 	// Read binary file
 	public DanhSachNhanVien readBinFile() {
 		return list;
 
 	}
-
-	// Write binary file
 
 	// Write Binary file
 	public void writeBinFile() throws IOException {

@@ -1,13 +1,15 @@
-package bai01;
+package tuan02_bai01;
 
-public class NhanVien {
+import java.io.Serializable;
+
+public class NhanVien implements Serializable {
 	private String maNV;
 	private String hoNV;
 	private String tenSV;
 	private String phai;
 	private int tuoi;
 	private int tienLuong;
-	
+
 	public NhanVien(String maNV, String hoNV, String tenSV, String phai, int tuoi, int tienLuong) {
 		this.maNV = maNV;
 		this.hoNV = hoNV;
@@ -25,8 +27,6 @@ public class NhanVien {
 		return result;
 	}
 
-
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -43,8 +43,6 @@ public class NhanVien {
 			return false;
 		return true;
 	}
-
-
 
 	public String getMaNV() {
 		return maNV;
@@ -93,7 +91,7 @@ public class NhanVien {
 	public void setTienLuong(int tienLuong) {
 		this.tienLuong = tienLuong;
 	}
-	
+
 	@Override
 	public String toString() {
 		return super.toString();

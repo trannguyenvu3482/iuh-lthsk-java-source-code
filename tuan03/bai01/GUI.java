@@ -1,73 +1,86 @@
-package tuan03_bai01;
+package bai01;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTree;
-import javax.swing.ListSelectionModel;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreePath;
 
-public class GUI extends JFrame implements ActionListener {
+public class GUI extends JFrame {
 	JTree tree;
-	DanhSachNhanVien dsPhongToChuc = new DanhSachNhanVien();
-	DanhSachNhanVien dsPhongKyThuat = new DanhSachNhanVien();
+	PhongBan dsPhongKyThuat = new PhongBan("001", "Phòng kỹ thuật");
 	DefaultTableModel model;
 	JTable tbl;
 	JDialog dialog = new JDialog();
+	private static CongTy c = new CongTy();
 
 	public GUI() {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Danh sách phòng ban");
-		DefaultMutableTreeNode nodeToChuc = new DefaultMutableTreeNode("Phòng tổ chức");
-		DefaultMutableTreeNode nodeKyThuat = new DefaultMutableTreeNode("Phòng kỹ thuật");
 
-		// add the child nodes to the root node
-		root.add(nodeToChuc);
-		root.add(nodeKyThuat);
+		for (PhongBan p : c.getLsPhongBan()) {
+			DefaultMutableTreeNode node = new DefaultMutableTreeNode(p.getTenPhongBan());
+			root.add(node);
+		}
 
 		// Create tree using root
 		tree = new JTree(root);
 		add(new JScrollPane(tree));
 
-		tree.addTreeSelectionListener(new TreeSelectionListener() {
-
+		tree.addMouseListener(new MouseAdapter() {
 			@Override
-			public void valueChanged(TreeSelectionEvent e) {
-				TreePath selPath = e.getNewLeadSelectionPath();
-				Object o = selPath.getLastPathComponent();
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					DefaultMutableTreeNode clickedNode = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
+					if (clickedNode != null) {
+						PhongBan p = c.findPhongBan(clickedNode.toString());
+						TableNhanVien frame = new TableNhanVien(p);
+						frame.setVisible(true);
+					} else {
 
-				showTable(o);
+					}
+				}
 			}
 		});
 	}
 
-	public void showTable(Object o) {
-		String[] cols = { "Mã", "Họ", "Tên", "Phái", "Tuổi", "Tiền lương" };
-		model = new DefaultTableModel(cols, 0);
-		tbl = new JTable(model);
-		tbl.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	public static void main(String[] args) {
+		c.themPhongBan("001", "Phòng kỹ thuật");
+		c.themPhongBan("002", "Phòng hành chính");
+		c.themPhongBan("003", "Phòng nhân sự");
+		c.themPhongBan("004", "Phòng Marketing");
+		c.themPhongBan("005", "Phòng bảo vệ");
 
-		dialog.setTitle(o.toString());
-		dialog.setSize(600, 400);
-		dialog.setLocationRelativeTo(null);
-		dialog.setResizable(false);
-		JScrollPane tablePane = new JScrollPane(tbl);
-		dialog.add(tablePane);
+		c.findPhongBan("Phòng kỹ thuật").themNhanVien(new NhanVien("001", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng kỹ thuật").themNhanVien(new NhanVien("002", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng kỹ thuật").themNhanVien(new NhanVien("003", "Tran", "Nguyen Vu", "Nam", 29, 2000));
 
-		dialog.setVisible(true);
+		c.findPhongBan("Phòng hành chính").themNhanVien(new NhanVien("001", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng hành chính").themNhanVien(new NhanVien("002", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng hành chính").themNhanVien(new NhanVien("003", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+
+		c.findPhongBan("Phòng nhân sự").themNhanVien(new NhanVien("001", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng nhân sự").themNhanVien(new NhanVien("002", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng nhân sự").themNhanVien(new NhanVien("003", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+
+		c.findPhongBan("Phòng Marketing").themNhanVien(new NhanVien("001", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng Marketing").themNhanVien(new NhanVien("002", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng Marketing").themNhanVien(new NhanVien("003", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+
+		c.findPhongBan("Phòng bảo vệ").themNhanVien(new NhanVien("001", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng bảo vệ").themNhanVien(new NhanVien("001", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+		c.findPhongBan("Phòng bảo vệ").themNhanVien(new NhanVien("001", "Tran", "Nguyen Vu", "Nam", 29, 2000));
+
+		GUI gui = new GUI();
+		gui.setTitle("^-^");
+		gui.setSize(800, 600);
+		gui.setLocationRelativeTo(null);
+		gui.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		gui.setResizable(false);
+		gui.setVisible(true);
 	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
 }
