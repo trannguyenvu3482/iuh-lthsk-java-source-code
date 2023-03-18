@@ -8,8 +8,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -212,9 +214,21 @@ public class GUI extends JFrame implements ActionListener {
 	}
 
 	// Read binary file
-	public DanhSachNhanVien readBinFile() {
-		return list;
+	public Object readBinFile(String fileName) {
+		Object o = null;
+		FileInputStream fis = null;
+		ObjectInputStream ois = null;
 
+		try {
+			fis = new FileInputStream(fileName);
+			ois = new ObjectInputStream(fis);
+			o = ois.readObject();
+			ois.close();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "IO Error");
+		}
+
+		return o;
 	}
 
 	// Write Binary file
@@ -232,6 +246,16 @@ public class GUI extends JFrame implements ActionListener {
 		} finally {
 			fos.close();
 			oos.close();
+		}
+	}
+
+	public void loadData() throws Exception {
+		list = null;
+		list = (DanhSachNhanVien) readBinFile("nhanvien.dat");
+
+		for (NhanVien nv : list.ls) {
+			String[] row = { nv.getHoNV(), nv.getTenSV() };
+			model.addRow(row);
 		}
 	}
 

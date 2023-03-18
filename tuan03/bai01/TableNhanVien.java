@@ -1,4 +1,4 @@
-package bai01;
+package tuan03_bai01;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;

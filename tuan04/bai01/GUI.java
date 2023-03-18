@@ -2,6 +2,8 @@ package tuan04_bai01;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -35,6 +37,7 @@ public class GUI extends JFrame implements ActionListener {
 	private JTextField txtTacGia = new JTextField(20);
 	private JTextField txtNhaXB = new JTextField(20);
 	private JTextField txtDonGia = new JTextField(20);
+	private JComboBox<String> boxTim = new JComboBox<String>();
 	private JTable tbl;
 	private DefaultTableModel model;
 	private ListSach list = new ListSach();
@@ -113,8 +116,6 @@ public class GUI extends JFrame implements ActionListener {
 		middlePanel.setBounds(50, 200, 785, 50);
 
 		JLabel lblTim = new JLabel("Tìm theo mã sách");
-		String[] testCols = { "A001", "J002", "H003" };
-		JComboBox<String> boxTim = new JComboBox<String>(testCols);
 
 		middlePanel.add(btnThem);
 		middlePanel.add(btnXoaRong);
@@ -167,6 +168,8 @@ public class GUI extends JFrame implements ActionListener {
 			String[] data = { s.getMaSach(), s.getTuaSach(), s.getTacGia(), Integer.toString(s.getNamXB()),
 					s.getNhaXB(), Integer.toString(s.getSoTrang()), Double.toString(s.getDonGia()), s.getISBN() };
 			model.addRow(data);
+
+			boxTim.addItem(data[0]);
 		}
 
 		// Table handler
@@ -183,15 +186,29 @@ public class GUI extends JFrame implements ActionListener {
 				txtISBN.setText((String) model.getValueAt(tbl.getSelectedRow(), 7));
 			}
 		});
+
+		// Combobox handler
+		boxTim.addItemListener(new ItemListener() {
+
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				Sach s = list.timSach((String) e.getItem());
+				if (s != null) {
+					tbl.setRowSelectionInterval(list.getLs().indexOf(s), list.getLs().indexOf(s));
+				}
+			}
+		});
 	}
 
 	public void refreshTable() {
+		boxTim.removeAllItems();
 		model.setRowCount(0);
 
 		for (Sach s : list.getLs()) {
 			String[] data = { s.getMaSach(), s.getTuaSach(), s.getTacGia(), Integer.toString(s.getNamXB()),
 					s.getNhaXB(), Integer.toString(s.getSoTrang()), Double.toString(s.getDonGia()), s.getISBN() };
 			model.addRow(data);
+			boxTim.addItem(data[0]);
 		}
 	}
 
@@ -262,6 +279,7 @@ public class GUI extends JFrame implements ActionListener {
 				Sach s = list.timSach((String) model.getValueAt(tbl.getSelectedRow(), 0));
 				list.xoaSach(s);
 				JOptionPane.showMessageDialog(this, "Đã xóa thành công");
+				tbl.removeRowSelectionInterval(tbl.getSelectedRow(), tbl.getSelectedRow());
 				xoaRong();
 				refreshTable();
 			} else {

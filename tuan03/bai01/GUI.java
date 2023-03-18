@@ -1,4 +1,4 @@
-package bai01;
+package tuan03_bai01;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
