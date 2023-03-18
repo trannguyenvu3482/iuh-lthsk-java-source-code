@@ -76,6 +76,8 @@ public class Sach {
 
 	public boolean containsNumberOrSymbol(String input) {
 		for (char character : input.toCharArray()) {
+			if (character == ' ') continue;
+			
 			if (Character.isDigit(character) || (!Character.isLetterOrDigit(character) && character != '\'')) {
 				return true;
 			}
@@ -96,12 +98,7 @@ public class Sach {
 	}
 
 	public void setTuaSach(String tuaSach) throws Exception {
-//		if (!tuaSach.equals("") && !containsNumberOrSymbol(tuaSach)) {
-//			this.tuaSach = tuaSach;
-//		} else
-//			throw new Exception("Không được rỗng hoặc chứa ký tự đặc biệt (trừ ')");
-
-		if (!tuaSach.equals("")) {
+		if (!tuaSach.equals("") && !containsNumberOrSymbol(tuaSach)) {
 			this.tuaSach = tuaSach;
 		} else
 			throw new Exception("Không được rỗng hoặc chứa ký tự đặc biệt (trừ ')");

@@ -172,6 +172,17 @@ public class GUI extends JFrame implements ActionListener {
 				Sach s = list.timSach((String) e.getItem());
 				if (s != null) {
 					tbl.setRowSelectionInterval(list.getLs().indexOf(s), list.getLs().indexOf(s));
+					
+					if (tbl.getSelectedRow() != -1) {
+						txtMaSach.setText((String) model.getValueAt(tbl.getSelectedRow(), 0));
+						txtTuaSach.setText((String) model.getValueAt(tbl.getSelectedRow(), 1));
+						txtTacGia.setText((String) model.getValueAt(tbl.getSelectedRow(), 2));
+						txtNamXB.setText((String) model.getValueAt(tbl.getSelectedRow(), 3));
+						txtNhaXB.setText((String) model.getValueAt(tbl.getSelectedRow(), 4));
+						txtSoTrang.setText((String) model.getValueAt(tbl.getSelectedRow(), 5));
+						txtDonGia.setText((String) model.getValueAt(tbl.getSelectedRow(), 6));
+						txtISBN.setText((String) model.getValueAt(tbl.getSelectedRow(), 7));
+					}
 				}
 			}
 		});
@@ -299,19 +310,22 @@ public class GUI extends JFrame implements ActionListener {
 
 		} else if (o.equals(btnXoa)) {
 			if (tbl.getSelectedRow() != -1) {
-				Sach s = list.timSach((String) model.getValueAt(tbl.getSelectedRow(), 0));
-				list.xoaSach(s);
-				saveFile("./src/data/DanhMucSach.txt");
-				JOptionPane.showMessageDialog(this, "Đã xóa thành công");
-				tbl.removeRowSelectionInterval(tbl.getSelectedRow(), tbl.getSelectedRow());
-				xoaRong();
-				refreshTable();
+				int selection = JOptionPane.showConfirmDialog(this, "Bạn có chắc chắn muốn xóa dòng này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
+
+				if (selection == JOptionPane.YES_OPTION) {
+					Sach s = list.timSach((String) model.getValueAt(tbl.getSelectedRow(), 0));
+					list.xoaSach(s);
+					saveFile("./src/data/DanhMucSach.txt");
+					JOptionPane.showMessageDialog(this, "Đã xóa thành công");
+					tbl.removeRowSelectionInterval(tbl.getSelectedRow(), tbl.getSelectedRow());
+					xoaRong();
+					refreshTable();
+				}
 			} else {
 				JOptionPane.showMessageDialog(this, "Phải chọn một dòng để xóa");
 			}
 		} else if (o.equals(btnXoaRong)) {
 			xoaRong();
-			JOptionPane.showMessageDialog(this, "Đã xóa rỗng các trường, vui lòng nhập lại!");
 		} else if (o.equals(btnSua)) {
 			if (tbl.getSelectedRow() != -1) {
 				if (!checkInputFields())

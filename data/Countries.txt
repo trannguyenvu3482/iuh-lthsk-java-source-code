@@ -1,0 +1,2 @@
+USA,Washington DC,280,true
+Canada,Ottawa,32,true

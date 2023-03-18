@@ -1,0 +1,3 @@
+A001;Annotations Reflection;Jakob Jenkov;2014;Prentice Hall;420;70000.0;0-13-376131-1
+J002;Java Enterprise;O'Reilly;2012;Prentice Hall;314;120000.0;0-7506-6098-8
+H003;Hibernate Tutorial;Gavin King;2014;Prentice Hall;352;90000.0;978-0-13-37611-3
