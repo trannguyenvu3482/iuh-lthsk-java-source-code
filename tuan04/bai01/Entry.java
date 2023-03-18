@@ -1,4 +1,4 @@
-package tuan04_bai01;
+package tuan04.bai01;
 
 import javax.swing.JFrame;
 

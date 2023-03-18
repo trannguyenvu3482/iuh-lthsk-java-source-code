@@ -1,4 +1,4 @@
-package tuan04_bai01;
+package tuan04.bai01;
 
 import java.util.Objects;
 
@@ -87,19 +87,12 @@ public class Sach {
 		if (maSach.equals(""))
 			throw new Exception("Không được rỗng");
 
-//		if (maSach.substring(0, 0).equals(tuaSach.substring(0, 0))) {
-//			try {
-//				Integer.parseInt(maSach.substring(1, 3));
-//
-//				this.maSach = maSach;
-//			} catch (Exception e) {
-//				throw new Exception("3 ký tự sau phải ở dạng ký số");
-//			}
-//		} else {
-//			throw new Exception("Ký tự đầu tiên của mã sách phải là ký tự đầu của tựa sách");
-//		}
+		if (maSach.matches("[A-Z][0-9]{3}")) {
+			this.maSach = maSach;
+		} else {
+			throw new Exception("Mã sách phải bắt đầu bằng một chữ cái in hoa và theo sau 3 ký số (VD: A001)");
+		}
 
-		this.maSach = maSach;
 	}
 
 	public void setTuaSach(String tuaSach) throws Exception {
@@ -115,19 +108,16 @@ public class Sach {
 	}
 
 	public void setTacGia(String tacGia) throws Exception {
-//		if (!tuaSach.equals("") && !containsNumberOrSymbol(tuaSach)) {
-//			this.tacGia = tacGia;
-//		} else
-//			throw new Exception("Không được rỗng hoặc chứa ký tự đặc biệt (trừ ')");
-
 		if (!tuaSach.equals("")) {
 			this.tacGia = tacGia;
 		} else
 			throw new Exception("Không được rỗng hoặc chứa ký tự đặc biệt (trừ ')");
 	}
 
-	public void setNamXB(int namXB) {
-		this.namXB = namXB;
+	public void setNamXB(int namXB) throws Exception {
+		if (namXB > 0 && namXB < 2024) {
+			this.namXB = namXB;
+		} else throw new Exception("Năm xuất bản phải từ 2023 trở về trước");
 	}
 
 	public void setNhaXB(String nhaXB) {
@@ -143,12 +133,11 @@ public class Sach {
 	}
 
 	public void setISBN(String iSBN) throws Exception {
-//		if (iSBN.matches("/^\\d+-\\d+-\\d+-\\d+$/") || iSBN.matches("/^\\d+-\\d+-\\d+-\\d+-\\d+$/")) {
-//			this.ISBN = iSBN;
-//		} else
-//			throw new Exception("ISBN phải có dạng X-X-X-X hoặc X-X-X-X-X, với X là ký số");
+		if (iSBN.matches("[0-9]+-[0-9]+-[0-9]+-[0-9]+") || iSBN.matches("[0-9]+-[0-9]+-[0-9]+-[0-9]+-[0-9]+")) {
+			this.ISBN = iSBN;
+		} else
+			throw new Exception("ISBN phải có dạng X-X-X-X hoặc X-X-X-X-X, với X là ký số");
 
-		this.ISBN = iSBN;
 	}
 
 	@Override

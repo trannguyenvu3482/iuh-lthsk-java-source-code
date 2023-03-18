@@ -1,4 +1,4 @@
-package tuan04_bai02;
+package tuan04.bai02;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Scanner;
 
 import javax.swing.Box;
@@ -130,10 +131,10 @@ public class GUI extends JFrame implements ActionListener {
 					txtCountry.setText((String) model.getValueAt(tbl.getSelectedRow(), 0));
 					txtCapital.setText((String) model.getValueAt(tbl.getSelectedRow(), 1));
 					txtPopulation.setText((String) model.getValueAt(tbl.getSelectedRow(), 2));
-					boxDemocracy.setSelectedIndex(
-							Boolean.parseBoolean((String) model.getValueAt(tbl.getSelectedRow(), 3)) ? 0 : 1);
-				}
-			}
+					
+					
+					boxDemocracy.setSelectedItem(model.getValueAt(tbl.getSelectedRow(), 3));
+			}}
 		});
 	}
 
@@ -165,24 +166,45 @@ public class GUI extends JFrame implements ActionListener {
 		}
 	}
 
-	public void loadTxtFile() throws Exception {
-		File f = new File("./data/Countries.txt");
+	public void loadTxtFile() {
+		try {
+			File f = new File("./src/data/Countries.txt");
 
-		if (f.exists()) {
-			Scanner sc = new Scanner(f);
+			if (f.exists()) {
+				Scanner sc = new Scanner(f);
 
-			while (sc.hasNextLine()) {
-				String line = sc.nextLine();
-				String[] data = line.split(",");
+				while (sc.hasNextLine()) {
+					String line = sc.nextLine();
+					String[] data = line.split(",");
 
-				list.themCountry(
-						new Country(data[0], data[1], Integer.parseInt(data[2]), Boolean.parseBoolean(data[3])));
+					list.themCountry(
+							new Country(data[0], data[1], Integer.parseInt(data[2]), Boolean.parseBoolean(data[3])));
+				}
+				sc.close();
+				refreshTable();
+				JOptionPane.showMessageDialog(this, "Đã load file thành công");
+			} else {
+				f.createNewFile();
 			}
-			sc.close();
-			refreshTable();
-			JOptionPane.showMessageDialog(this, "Đã load file thành công");
-		} else {
-			f.createNewFile();
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(this, "Đã có lỗi trong lúc load file");
+		}
+	}
+	
+	public void saveTxtFile() {
+		try {
+			File f = new File("./src/data/Countries.txt");
+			FileWriter writer = new FileWriter(f);
+			
+			for (Country c : list.getLs()) {
+				String s = c.getName() + "," + c.getCapital() + "," + c.getPopulation() + "," + c.isDemocracy();
+				writer.write(s);
+				writer.write("\n");
+			}
+			
+			writer.close();
+		} catch (Exception e) {
+			// TODO: handle exception
 		}
 	}
 

@@ -1,4 +1,4 @@
-package tuan04_bai01;
+package tuan04.bai01;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -7,6 +7,7 @@ import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.Scanner;
 
 import javax.swing.BorderFactory;
@@ -146,31 +147,7 @@ public class GUI extends JFrame implements ActionListener {
 		btnSua.addActionListener(this);
 		btnXoa.addActionListener(this);
 
-		// Add data to database, show to table using txt file
-		File f = new File("./data/DanhMucSach.txt");
-		if (f.exists()) {
-			Scanner sc = new Scanner(f);
-			sc.nextLine();
-			while (sc.hasNextLine()) {
-				String line = sc.nextLine();
-				String[] data = line.split(";");
-				list.themSach(new Sach(data[0], data[1], data[2], Integer.parseInt(data[3]), data[4],
-						Integer.parseInt(data[5]), Double.parseDouble(data[6]), data[7]));
-			}
-			JOptionPane.showMessageDialog(this, "Đã nhập file thành công");
-			sc.close();
-		} else {
-			JOptionPane.showMessageDialog(this, "Nhập file không thành công");
-			f.createNewFile();
-		}
-
-		for (Sach s : list.getLs()) {
-			String[] data = { s.getMaSach(), s.getTuaSach(), s.getTacGia(), Integer.toString(s.getNamXB()),
-					s.getNhaXB(), Integer.toString(s.getSoTrang()), Double.toString(s.getDonGia()), s.getISBN() };
-			model.addRow(data);
-
-			boxTim.addItem(data[0]);
-		}
+		loadFile("./src/data/DanhMucSach.txt");
 
 		// Table handler
 		tbl.addMouseListener(new MouseAdapter() {
@@ -198,6 +175,51 @@ public class GUI extends JFrame implements ActionListener {
 				}
 			}
 		});
+	}
+	
+	public void loadFile(String directory) throws Exception {
+		// Add data to database, show to table using txt file
+				File f = new File(directory);
+				
+				if (f.exists()) {
+					Scanner sc = new Scanner(f);
+					while (sc.hasNextLine()) {
+						String line = sc.nextLine();
+						String[] data = line.split(";");
+						list.themSach(new Sach(data[0], data[1], data[2], Integer.parseInt(data[3]), data[4],
+								Integer.parseInt(data[5]), Double.parseDouble(data[6]), data[7]));
+					}
+					JOptionPane.showMessageDialog(this, "Đã nhập file thành công");
+					sc.close();
+				} else {
+					JOptionPane.showMessageDialog(this, "Nhập file không thành công");
+					f.createNewFile();
+				}
+
+				for (Sach s : list.getLs()) {
+					String[] data = { s.getMaSach(), s.getTuaSach(), s.getTacGia(), Integer.toString(s.getNamXB()),
+							s.getNhaXB(), Integer.toString(s.getSoTrang()), Double.toString(s.getDonGia()), s.getISBN() };
+					model.addRow(data);
+
+					boxTim.addItem(data[0]);
+				}
+	}
+	
+	public void saveFile(String directory) {
+		try {
+			File f = new File(directory);
+			FileWriter writer = new FileWriter(f);
+			
+			for (Sach s : list.getLs()) {
+				String st = s.getMaSach() + ";" + s.getTuaSach() + ";" + s.getTacGia() + ";" + s.getNamXB() + ";" + s.getNhaXB() + ";" + s.getSoTrang() + ";" + s.getDonGia() + ";" + s.getISBN();
+				writer.write(st);
+				writer.write("\n");
+			}
+			
+			writer.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void refreshTable() {
@@ -263,13 +285,14 @@ public class GUI extends JFrame implements ActionListener {
 						txtISBN.getText()));
 
 				if (result) {
+					saveFile("./src/data/DanhMucSach.txt");
 					JOptionPane.showMessageDialog(this, "Đã thêm dữ liệu thành công");
 					xoaRong();
 				} else {
 					JOptionPane.showMessageDialog(this, "Đã có lỗi trong lúc thêm");
 				}
 			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(this, "Đã có lỗi trong lúc thêm");
+				JOptionPane.showMessageDialog(this, e1.getMessage());
 			}
 
 			refreshTable();
@@ -278,6 +301,7 @@ public class GUI extends JFrame implements ActionListener {
 			if (tbl.getSelectedRow() != -1) {
 				Sach s = list.timSach((String) model.getValueAt(tbl.getSelectedRow(), 0));
 				list.xoaSach(s);
+				saveFile("./src/data/DanhMucSach.txt");
 				JOptionPane.showMessageDialog(this, "Đã xóa thành công");
 				tbl.removeRowSelectionInterval(tbl.getSelectedRow(), tbl.getSelectedRow());
 				xoaRong();

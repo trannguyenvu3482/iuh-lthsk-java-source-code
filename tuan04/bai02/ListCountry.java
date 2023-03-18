@@ -1,4 +1,4 @@
-package tuan04_bai02;
+package tuan04.bai02;
 
 import java.util.ArrayList;
 import java.util.List;
