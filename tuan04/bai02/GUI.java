@@ -1,4 +1,4 @@
-package tuan04.bai02;
+package tuan04_bai02;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -29,6 +29,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
 public class GUI extends JFrame implements ActionListener {
+	private static final long serialVersionUID = 1L;
 	private JButton btnAdd = new JButton("Add");
 	private JButton btnClear = new JButton("Clear");
 	private JButton btnUpdate = new JButton("Update");
@@ -131,10 +132,10 @@ public class GUI extends JFrame implements ActionListener {
 					txtCountry.setText((String) model.getValueAt(tbl.getSelectedRow(), 0));
 					txtCapital.setText((String) model.getValueAt(tbl.getSelectedRow(), 1));
 					txtPopulation.setText((String) model.getValueAt(tbl.getSelectedRow(), 2));
-					
-					
+
 					boxDemocracy.setSelectedItem(model.getValueAt(tbl.getSelectedRow(), 3));
-			}}
+				}
+			}
 		});
 	}
 
@@ -190,21 +191,21 @@ public class GUI extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(this, "Đã có lỗi trong lúc load file");
 		}
 	}
-	
+
 	public void saveTxtFile() {
 		try {
 			File f = new File("./src/data/Countries.txt");
 			FileWriter writer = new FileWriter(f);
-			
+
 			for (Country c : list.getLs()) {
 				String s = c.getName() + "," + c.getCapital() + "," + c.getPopulation() + "," + c.isDemocracy();
 				writer.write(s);
 				writer.write("\n");
 			}
-			
+
 			writer.close();
 		} catch (Exception e) {
-			// TODO: handle exception
+			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
 	}
 
@@ -219,14 +220,59 @@ public class GUI extends JFrame implements ActionListener {
 		Object o = e.getSource();
 
 		if (o.equals(btnAdd)) {
+			try {
+				list.themCountry(new Country(txtCountry.getText(), txtCapital.getText(),
+						Integer.parseInt(txtPopulation.getText()),
+						Boolean.parseBoolean(boxDemocracy.getSelectedItem().toString())));
 
+				JOptionPane.showMessageDialog(this, "Thêm thành công");
+
+				saveTxtFile();
+				refreshTable();
+			} catch (Exception e2) {
+				JOptionPane.showMessageDialog(this, e2.getMessage());
+			}
 		} else if (o.equals(btnClear)) {
 			clearFields();
 			JOptionPane.showMessageDialog(this, "Đã xóa các trường");
 		} else if (o.equals(btnUpdate)) {
+			if (tbl.getSelectedRow() != -1) {
+				try {
+					Country c = list.findCountry(model.getValueAt(tbl.getSelectedRow(), 0).toString());
 
+					c.setName(txtCountry.getText());
+
+					c.setCapital(txtCapital.getText());
+					c.setPopulation(Integer.parseInt(txtPopulation.getText()));
+					c.setDemocracy(Boolean.parseBoolean(boxDemocracy.getSelectedItem().toString()));
+					JOptionPane.showMessageDialog(this, "Cập nhật thành công");
+
+					saveTxtFile();
+					refreshTable();
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(this, e2.getMessage());
+				}
+
+			} else {
+				JOptionPane.showMessageDialog(this, "Phải chọn một dòng để sửa");
+			}
 		} else if (o.equals(btnDelete)) {
+			if (tbl.getSelectedRow() != -1) {
+				try {
+					Country c = list.findCountry(model.getValueAt(tbl.getSelectedRow(), 0).toString());
 
+					list.xoaCountry(c);
+					JOptionPane.showMessageDialog(this, "Xóa thành công");
+
+					saveTxtFile();
+					refreshTable();
+				} catch (Exception e2) {
+					JOptionPane.showMessageDialog(this, e2.getMessage());
+				}
+
+			} else {
+				JOptionPane.showMessageDialog(this, "Phải chọn một dòng để xóa");
+			}
 		} else if (o.equals(btnSearch)) {
 			String input = JOptionPane.showInputDialog(this, "Nhập vào tên quốc gia muốn tìm");
 			Country c = list.findCountry(input);
@@ -237,6 +283,5 @@ public class GUI extends JFrame implements ActionListener {
 				JOptionPane.showMessageDialog(this, "Không tìm thấy quốc gia " + input);
 			}
 		}
-
 	}
 }

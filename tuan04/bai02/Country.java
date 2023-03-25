@@ -1,4 +1,4 @@
-package tuan04.bai02;
+package tuan04_bai02;
 
 import java.util.Objects;
 
@@ -8,11 +8,11 @@ public class Country {
 	private int population;
 	private boolean democracy;
 
-	public Country(String name, String capital, int population, boolean democracy) {
-		this.name = name;
-		this.capital = capital;
-		this.population = population;
-		this.democracy = democracy;
+	public Country(String name, String capital, int population, boolean democracy) throws Exception {
+		setName(name);
+		setCapital(capital);
+		setPopulation(population);
+		setDemocracy(democracy);
 	}
 
 	@Override
@@ -32,6 +32,19 @@ public class Country {
 		return Objects.equals(name, other.name);
 	}
 
+	private boolean hasNumberOrSymbols(String s) {
+		for (int i = 0; i < s.length(); i++) {
+			if (Character.isWhitespace(s.charAt(i)))
+				continue;
+
+			if (!Character.isLetter(s.charAt(i))) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -48,16 +61,31 @@ public class Country {
 		return democracy;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setName(String name) throws Exception {
+		if (name.equalsIgnoreCase("")) {
+			throw new Exception("Tên quốc gia không được phép rỗng");
+		} else if (hasNumberOrSymbols(name)) {
+			throw new Exception("Tên quốc gia không được chứa ký số hoặc ký tự đặc biệt");
+		} else {
+			this.name = name;
+		}
 	}
 
-	public void setCapital(String capital) {
-		this.capital = capital;
+	public void setCapital(String capital) throws Exception {
+		if (capital.equalsIgnoreCase("")) {
+			throw new Exception("Tên thủ đô không được phép rỗng");
+		} else if (hasNumberOrSymbols(capital)) {
+			throw new Exception("Tên thủ đô không được chứa ký số hoặc ký tự đặc biệt");
+		} else {
+			this.capital = capital;
+		}
 	}
 
-	public void setPopulation(int population) {
-		this.population = population;
+	public void setPopulation(int population) throws Exception {
+		if (population > 0) {
+			this.population = population;
+		} else
+			throw new Exception("Số dân phải lớn hơn 0");
 	}
 
 	public void setDemocracy(boolean democracy) {
